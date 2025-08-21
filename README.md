@@ -1,54 +1,67 @@
-# OS Assignment -- Interprocess Communication with fork, exec, and pipes
+# OS Assignment – Interprocess Communication with Pipes and fork/exec
 
-**Overview:**\
-This project is part of an Operating Systems course. The task was to
-rewrite the program **nicecmp** so that it no longer implements
-comparison functions itself, but instead delegates the comparison work
-to the external program **loopcmp**.
+## Overview
+This project is part of an Operating Systems course.  
+The task was to implement a program (`nicecmp`) that manages string comparison tasks using child processes and interprocess communication (IPC).  
 
-The rewritten program uses **fork**, **exec**, **dup2**, and **pipe**
-system calls to communicate between parent and child processes. Each
-child process runs `loopcmp` with a specific comparison mode (`lexcmp`
-or `lencmp`), while the parent (`nicecmp`) collects input from the user,
-sends it to the appropriate child via a pipe, and reads back the result
-through another pipe.
+Two comparison methods are supported:
+- **Lexicographic comparison** (`lexcmp`)
+- **Length comparison** (`lencmp`)
 
-This design demonstrates interprocess communication (IPC) and separation
-of responsibilities between parent and child processes.
+The main program creates child processes on demand (via `fork` and `exec`) and communicates with them through **pipes**.
 
-------------------------------------------------------------------------
+---
 
-**Environment & Compilation:**\
-- **Operating System:** Linux\
-- **Implementation:** Written in C, using POSIX system calls (`fork`,
-`exec`, `pipe`, `dup2`, `waitpid`).\
-- **Compilation:** Managed with a custom Makefile.
+## Environment & Compilation
+- **Operating System:** Linux  
+- **Implementation:** Written in C, using POSIX system calls (`fork`, `exec`, `pipe`, `dup2`, `waitpid`)  
+- **Compilation:** Managed with a custom Makefile
 
-``` bash
+```bash
 make
 ```
 
-------------------------------------------------------------------------
+---
 
-**Execution:**\
+## Execution
 Run the program once from the terminal:
 
-``` bash
+```bash
 ./nicecmp
 ```
 
-The program repeatedly:\
-1. Prompts the user for two strings.\
-2. Asks the user to choose a comparison method (lexicographic or
-length).\
-3. Sends the strings to the appropriate child process.\
-4. Receives and prints the result.
+The program repeatedly:
+1. Prompts the user for two strings.  
+2. Asks the user to choose a comparison method (lexicographic or length).  
+3. Sends the strings to the appropriate child process.  
+4. Receives and prints the result.  
 
-------------------------------------------------------------------------
+---
 
-**Key Difference from Assignment 3:**\
-While assignment 3 focused on launching comparison programs dynamically,
-assignment 4 emphasizes **persistent interprocess communication**: the
-children (`loopcmp`) stay alive and serve multiple requests, and
-`nicecmp` acts as a manager, orchestrating the flow of data through
-pipes.
+## Key Difference from Assignment 3
+While assignment 3 focused on launching comparison programs dynamically,  
+assignment 4 emphasizes **persistent interprocess communication**: once the child processes are created, they remain alive and are reused for multiple comparisons.
+
+---
+
+## Example Session
+```
+Please enter first string:
+ada
+Please enter second string:
+adaro
+Please choose:
+0 - lexcmp
+1 - lencmp
+1
+lencmp(ada, adaro) == -2
+```
+
+---
+
+## Cleaning Up
+To remove compiled executables:
+
+```bash
+make clean
+```
